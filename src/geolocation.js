@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import { data_table } from "./data/data";
-import randomColor from "randomcolor";
-import axios from "axios";
+// import randomColor from "randomcolor";
+// import axios from "axios";
 
 export const Geo = () => {
   const [filteredData, setFilteredData] = useState(data_table);
