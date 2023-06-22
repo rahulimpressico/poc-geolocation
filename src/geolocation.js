@@ -33,6 +33,10 @@ export const Geo = () => {
     setEndDate("");
     setStartDate("");
   };
+
+  const handleReset = () => {
+    window.location.reload(); // Refresh the application
+  };
   //   console.log(filteredData);
 
   //   const getData = async () => {
@@ -111,7 +115,7 @@ export const Geo = () => {
   }, [filteredData]);
 
   const uniqueDeviceIds = [];
-  filteredData.forEach((data) => {
+  data_table.forEach((data) => {
     const device_id = data.device_id;
 
     if (!uniqueDeviceIds.includes(device_id)) {
@@ -162,6 +166,7 @@ export const Geo = () => {
               class="form-select"
               aria-label="Default select example"
               onChange={handleDeviceIdChange}
+              value={deviceId}
             >
               <option selected>Select your Device </option>
               {uniqueDeviceIds.map((device_id, index) => {
@@ -204,14 +209,23 @@ export const Geo = () => {
                 Submit
               </button>
             )) || (
-              <button
-                type="submit"
-                disabled
-                className="btn btn-outline-success my-4 float-start"
-                onClick={handleSubmit}
-              >
-                Submit
-              </button>
+              <>
+                <button
+                  type="submit"
+                  disabled
+                  className="btn btn-outline-success my-4 float-start"
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-outline-primary my-4 mx-3 float-start"
+                  onClick={handleReset}
+                >
+                  Reset
+                </button>
+              </>
             )}
           </div>
         </div>
