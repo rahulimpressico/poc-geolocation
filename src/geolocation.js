@@ -151,9 +151,18 @@ export const Geo = () => {
             style={{ height: "72px" }}
           >
             <div className="container-fluid">
-              <span className="navbar-brand mb-0 h1 fw-bold">
-                GeoLocation Tracker
-              </span>
+              <a class="navbar-brand" href="#">
+                <img
+                  src="geo.png"
+                  alt="Logo"
+                  width="30"
+                  height="38"
+                  class="d-inline-block "
+                />
+                <span className="h5  fw-bold">
+                  GeoLocation Tracker
+                </span>
+              </a>
             </div>
           </nav>
         </div>
