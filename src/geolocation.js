@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import { data_table } from "./data/data";
-// import randomColor from "randomcolor";
+import randomColor from "randomcolor";
 // import axios from "axios";
 
 export const Geo = () => {
@@ -82,16 +82,17 @@ export const Geo = () => {
         dataPoint.longitude,
       ]);
 
-      const color = "#3A81F1";
+      // const color = "#3A81F1";
+      const color = getRandomColor()
 
       L.polyline(coordinates, { color, weight: 6 }).addTo(mapRef.current);
       const markerColors = [
         "red",
-        "blue",
-        "green",
-        "yellow",
-        "green",
-        "purple",
+        // "blue",
+        // "green",
+        // "yellow",
+        // "purple",
+        // "orange",
       ];
 
       // const startMarker = L.circleMarker(coordinates[0], {
@@ -102,7 +103,7 @@ export const Geo = () => {
       // }).addTo(mapRef.current);
       const endMarker = L.marker(coordinates[coordinates.length - 1], {
         icon: L.icon({
-          iconUrl: `https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColors[index]}.png`,
+          iconUrl: `https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${markerColors}.png`,
           iconSize: [25, 41],
           iconAnchor: [12, 41],
           popupAnchor: [1, -34],
@@ -135,13 +136,13 @@ export const Geo = () => {
     setEndDate(e.target.value);
   };
 
-  // const getRandomColor = () => {
-  //   const randomcolor = randomColor({
-  //     luminosity: "dark",
-  //   });
-  //   return randomcolor;
-  // };
-  // console.log(deviceId);
+  const getRandomColor = () => {
+    const randomcolor = randomColor({
+      luminosity: "dark",
+    });
+    return randomcolor;
+  };
+  console.log(deviceId);
   return (
     <>
       <div className="container-fluid">
@@ -159,9 +160,7 @@ export const Geo = () => {
                   height="38"
                   class="d-inline-block "
                 />
-                <span className="h5  fw-bold">
-                  GeoLocation Tracker
-                </span>
+                <span className="h5  fw-bold">GeoLocation Tracker</span>
               </a>
             </div>
           </nav>

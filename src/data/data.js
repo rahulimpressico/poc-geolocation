@@ -83,4 +83,32 @@ export const data_table = [
     latitude: 28.595888,
     longitude: 77.317923,
   },
+  {
+    device_id: 4,
+    date: "2023-06-21",
+    time: "12:51:06",
+    latitude: 28.593538,
+    longitude: 77.317167,
+  },
+  {
+    device_id: 4,
+    date: "2023-06-21",
+    time: "12:54:06",
+    latitude: 28.594505,
+    longitude: 77.318809,
+  },
+  {
+    device_id: 4,
+    date: "2023-06-21",
+    time: "12:58:06",
+    latitude: 28.594771,
+    longitude: 77.319738,
+  },
+  {
+    device_id: 4,
+    date: "2023-06-21",
+    time: "01:00:06",
+    latitude: 28.593756,
+    longitude: 77.320557,
+  },
 ];
