@@ -107,7 +107,7 @@ export const data_table = [
   {
     device_id: 4,
     date: "2023-06-21",
-    time: "01:00:06",
+    time: "13:00:06",
     latitude: 28.593756,
     longitude: 77.320557,
   },
