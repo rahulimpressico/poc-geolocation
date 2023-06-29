@@ -63,10 +63,6 @@ export const Geo = () => {
     setStartDate("");
   };
 
-  const handleReset = () => {
-    window.location.reload();
-  };
-
   const getData = async () => {
     try {
       const data = outputJSON;
@@ -92,6 +88,11 @@ export const Geo = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleReset = () => {
+    // window.location.reload();
+    getData();
   };
 
   useEffect(() => {
