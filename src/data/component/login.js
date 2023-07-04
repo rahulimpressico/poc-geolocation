@@ -38,7 +38,6 @@ export const Login = () => {
     const response = await axios(config);
     const data = response.data;
     const token = data.token;
-    console.log(token);
     setisLoggedIn(true);
     if (data) {
       window.localStorage.setItem("token", token);
