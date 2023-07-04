@@ -1,18 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import L from "leaflet";
-// import { data_table } from "./data/data";
 import randomColor from "randomcolor";
-// import axios from "axios";
 import { ZoomControl } from "react-leaflet";
 import Multiselect from "multiselect-react-dropdown";
 import "leaflet.polyline.snakeanim/L.Polyline.SnakeAnim.js";
-import { outputJSON } from "./data/mydata2_singlehidden";
+import { useNavigate } from "react-router-dom";
+import { ColorRing } from "react-loader-spinner";
 
 export const Geo = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [deviceId, setDeviceId] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const navigate = useNavigate();
 
   const mapRef = useRef(null);
 
@@ -36,23 +38,36 @@ export const Geo = () => {
     return randomcolor;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    const accessToken = localStorage.getItem("token");
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
 
-    const filteredLocations = outputJSON.filter((data) => {
-      const date = new Date(data.source.date).toLocaleString("en-US");
+    const response = await fetch(
+      "https://location-api-xl.onrender.com/location",
+      requestOptions
+    );
+    const data = await response.json();
+    console.log("papu:", data);
+
+    const filteredLocations = data.filter((data) => {
+      const date = new Date(data.date).toLocaleString("en-US");
       const withinDateRange =
         (!startDate || date >= new Date(startDate).toLocaleString("en-US")) &&
         (!endDate || date <= new Date(endDate).toLocaleString("en-US"));
-      const deviceMatch = deviceId.includes(data.custom_field);
-      console.log(deviceMatch);
+      const deviceMatch = deviceId.includes(data.device_id);
 
       return withinDateRange && (deviceId.length === 0 || deviceMatch);
     });
 
     const sortedData = filteredLocations.sort((a, b) => {
-      const dateA = new Date(a.source.date).toLocaleString("en-US");
-      const dateB = new Date(b.source.date).toLocaleString("en-US");
+      const dateA = new Date(a.date).toLocaleString("en-US");
+      const dateB = new Date(b.date).toLocaleString("en-US");
       return dateA - dateB;
     });
 
@@ -63,36 +78,56 @@ export const Geo = () => {
     setStartDate("");
   };
 
-  const getData = async () => {
-    try {
-      const data = outputJSON;
-
-      const filteredData = data.map((obj) => {
-        const { id, ...filteredObj } = obj;
-        return { ...filteredObj };
-      });
-      const sortedData = [...filteredData].sort((a, b) => {
-        if (a.custom_field !== b.custom_field) {
-          return a.custom_field.localeCompare(b.custom_field);
-        }
-        const A_date = new Date(a.source.date);
-        const B_date = new Date(b.source.date);
-        const formattedDate_A = A_date.toLocaleString("en-US");
-        const formattedDate_B = B_date.toLocaleString("en-US");
-        const dateA = new Date(formattedDate_A);
-        const dateB = new Date(formattedDate_B);
-        return dateA - dateB;
-      });
-
-      setFilteredData(sortedData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleReset = () => {
     // window.location.reload();
     getData();
+  };
+
+  const HandelLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  const getData = async () => {
+    const accessToken = localStorage.getItem("token");
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+    try {
+      const response = await fetch(
+        "https://location-api-xl.onrender.com/location",
+        requestOptions
+      );
+      if (response.status === 200) {
+        const data = await response.json();
+
+        const filteredData = data.map((obj) => {
+          const { id, ...filteredObj } = obj;
+          return { ...filteredObj };
+        });
+        const sortedData = [...filteredData].sort((a, b) => {
+          if (a.device_id !== b.device_id) {
+            return a.device_id.localeCompare(b.device_id);
+          }
+          const A_date = new Date(a.date);
+          const B_date = new Date(b.date);
+          const formattedDate_A = A_date.toLocaleString("en-US");
+          const formattedDate_B = B_date.toLocaleString("en-US");
+          const dateA = new Date(formattedDate_A);
+          const dateB = new Date(formattedDate_B);
+          return dateA - dateB;
+        });
+
+        setFilteredData(sortedData);
+      } else {
+        throw new Error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -121,21 +156,18 @@ export const Geo = () => {
         mapRef.current.removeLayer(layer);
       }
     });
-    const devices = new Set(filteredData.map((data) => data.custom_field));
+    const devices = new Set(filteredData.map((data) => data.device_id));
 
     devices.forEach((device) => {
       const deviceLocations = filteredData.filter(
-        (data) => data.custom_field === device
+        (data) => data.device_id === device
       );
 
       const coordinates = deviceLocations
-        .filter(
-          (dataPoint) =>
-            dataPoint.raw_value.LATITUDE && dataPoint.raw_value.LONGITUDE
-        )
+        .filter((dataPoint) => dataPoint.latitude && dataPoint.longitude)
         .map((dataPoint) => [
-          parseFloat(dataPoint.raw_value.LATITUDE),
-          parseFloat(dataPoint.raw_value.LONGITUDE),
+          parseFloat(dataPoint.latitude),
+          parseFloat(dataPoint.longitude),
         ])
         .filter(([lat, lng]) => !isNaN(lat) && !isNaN(lng));
 
@@ -181,14 +213,14 @@ export const Geo = () => {
     });
   }, [filteredData]);
 
-  useEffect(() => {});
+  // useEffect(() => {});
 
   const uniqueDeviceIds = [];
   filteredData.forEach((data) => {
-    const device_id = data.custom_field;
+    const device__id = data.device_id;
 
-    if (!uniqueDeviceIds.includes(device_id)) {
-      uniqueDeviceIds.push(device_id);
+    if (!uniqueDeviceIds.includes(device__id)) {
+      uniqueDeviceIds.push(device__id);
     }
   });
 
@@ -217,9 +249,20 @@ export const Geo = () => {
                   <span className="h5  fw-bold">GeoLocation Tracker</span>
                 </a>
               </div>
+              <div className="d-flex">
+                <button
+                  type="submit"
+                  className="btn btn-success"
+                  style={{ paddingRight: "60px", paddingLeft: "20px" }}
+                  onClick={HandelLogout}
+                >
+                  Logout
+                </button>
+              </div>
             </nav>
           </div>
           <br />
+
           <div className="row mx-1">
             <div className="col-md-3" style={{ zIndex: "9999" }}>
               <>
@@ -298,6 +341,7 @@ export const Geo = () => {
               )}
             </div>
           </div>
+
           <br />
           <br />
         </div>
