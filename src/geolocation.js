@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import L from "leaflet";
 import randomColor from "randomcolor";
 import { ZoomControl } from "react-leaflet";
 import Multiselect from "multiselect-react-dropdown";
 import "leaflet.polyline.snakeanim/L.Polyline.SnakeAnim.js";
 import { useNavigate } from "react-router-dom";
-import { ColorRing } from "react-loader-spinner";
+
 
 export const Geo = () => {
   const [filteredData, setFilteredData] = useState([]);
