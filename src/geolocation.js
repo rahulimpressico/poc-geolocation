@@ -52,7 +52,6 @@ export const Geo = () => {
       requestOptions
     );
     const data = await response.json();
-    console.log("papu:", data);
 
     const filteredLocations = data.filter((data) => {
       const date = new Date(data.date).toLocaleString("en-US");
